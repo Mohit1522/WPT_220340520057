@@ -1,0 +1,95 @@
+<html>
+  <head>
+    <title>Book store</title>
+    <script src="jquery-3.5.1.min.js"></script>
+    <script>
+      $(() => {
+        console.log("content si loaded");
+        let books = [];
+
+        function showAllbooks() {
+          let parameterstothefunction = {
+            data: {},
+            type: "get",
+            dataType: "json",
+            url: "http://localhost:8081/getAllbooks",
+            success: (output) => {
+              console.log("success" + output);
+              books = output;
+              let content = "";
+              for (let i = 0; i < books.length; i++) {
+                content +=
+                  "<br>" +
+                  books[i].bookid +
+                  " " +
+                  books[i].bookname +
+                  " " +
+                  books[i].price;
+              }
+              $("#details").html(content);
+            },
+            error: (err) => {
+              console.log("failure" + err);
+            },
+          };
+          $.ajax(parameterstothefunction);
+        }
+
+        $("#add").click(() => {
+          console.log("click is working");
+          let input = {
+            x: $("#bookid").val(),
+            y: $("#bookname").val(),
+            z: $("#price").val(),
+          };
+          let parameterstothefunction = {
+            data: input,
+            type: "get",
+            dataType: "json",
+            url: "http://localhost:8081/Addbook",
+            success: (output) => {
+              console.log("success" + output.status);
+              console.log(output.status);
+              if (output.status) {
+                $("#msg").text("book added succesfully");
+                $("#msg").removeClass("r").addClass("b");
+              } else {
+                $("#msg").text("bookid already present");
+                $("#msg").removeClass("b").addClass("r");
+              }
+              showAllbooks();
+            },
+            error: (err) => {
+              console.log("failure" + err);
+            },
+          };
+          $.ajax(parameterstothefunction);
+
+        });
+
+        showAllbooks();
+      });
+    </script>
+    <style>
+      .r {
+        color: red;
+      }
+      .b {
+        color: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Book store</h2>
+    <span>Book id</span
+    ><input type="text" id="bookid" placeholder="book id" /><span
+      id="msg"
+    ></span
+    ><br />
+    <span>Book name</span
+    ><input type="text" id="bookname" placeholder="book name" /><br />
+    <span>price</span><input type="text" id="price" placeholder="price" /><br />
+    <button id="add">Add</button><br />
+    <span id="details"></span>
+  </body>
+</html>
